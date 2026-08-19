@@ -1,0 +1,13 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Source recordings kept at the project root are byte-identical copies of the
+# files served from public/audio/ — commit one copy, not two.
+/monika calling agent.mp3
+/Priya calling agent.mp3
