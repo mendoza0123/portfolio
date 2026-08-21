@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, Phone, Mail, CheckCircle2, Sparkles, MessageSquare, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { submitEnquiry } from '../lib/enquiry';
 
 interface GrowthAuditSectionProps {
   onOpenContact?: (subject?: string) => void;
@@ -12,16 +13,45 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
   const [phone, setPhone] = useState<string>('');
   const [serviceFocus, setServiceFocus] = useState<string>('Manufacturing & Factory Automation');
   const [bottleneck, setBottleneck] = useState<string>('');
+  const [trap, setTrap] = useState<string>('');
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [sending, setSending] = useState<boolean>(false);
+  const [sendError, setSendError] = useState<string>('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email) return;
+    if (!name || !email || sending) return;
+
+    setSending(true);
+    setSendError('');
+
+    const result = await submitEnquiry({
+      form: 'Growth Audit',
+      name,
+      email,
+      phone,
+      company: brand,
+      interest: serviceFocus,
+      message: bottleneck,
+      trap,
+    });
+
+    setSending(false);
+
+    if (result.ok === false) {
+      setSendError(
+        result.reason === 'unconfigured'
+          ? 'The enquiry endpoint is not configured yet, so this was not recorded. Please email loharaditya301@gmail.com directly.'
+          : 'Could not reach the server. Please check your connection or email loharaditya301@gmail.com directly.'
+      );
+      return;
+    }
+
     setSubmitted(true);
   };
 
   return (
-    <section id="audit" className="py-20 relative bg-slate-900 text-white overflow-hidden">
+    <section id="audit" className="py-14 sm:py-20 relative bg-slate-900 text-white overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none" />
@@ -214,12 +244,31 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                     />
                   </div>
 
+                  {/* Honeypot: hidden from people, irresistible to bots */}
+                  <input
+                    type="text"
+                    name="company_website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    value={trap}
+                    onChange={(e) => setTrap(e.target.value)}
+                    className="absolute left-[-9999px] w-px h-px opacity-0"
+                  />
+
+                  {sendError && (
+                    <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/40 text-rose-200 text-[11px] font-mono leading-relaxed">
+                      {sendError}
+                    </div>
+                  )}
+
                   {/* Submit CTA */}
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-mono text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.01]"
+                    disabled={sending}
+                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-mono text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    <span>Start a Conversation &rarr;</span>
+                    <span>{sending ? 'Sending…' : 'Start a Conversation →'}</span>
                   </button>
 
                   <p className="text-center text-[11px] text-slate-400 font-sans">

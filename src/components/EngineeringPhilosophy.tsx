@@ -23,7 +23,7 @@ export const EngineeringPhilosophy: React.FC = () => {
   };
 
   return (
-    <section id="philosophy" className="py-20 relative bg-slate-50 border-t border-slate-200">
+    <section id="philosophy" className="py-14 sm:py-20 relative bg-slate-50 border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
@@ -44,7 +44,7 @@ export const EngineeringPhilosophy: React.FC = () => {
           {PHILOSOPHY_PILLARS.map((pillar) => (
             <div
               key={pillar.id}
-              className="rounded-2xl bg-white p-6 border border-slate-200 hover:border-slate-300 flex flex-col justify-between transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              className="rounded-2xl bg-white p-4 sm:p-6 border border-slate-200 hover:border-slate-300 flex flex-col justify-between transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
             >
               <div>
                 <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">

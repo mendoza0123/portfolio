@@ -46,7 +46,7 @@ export const ArchitectureVisualizer: React.FC = () => {
   const currentStepData = WORKFLOW_SIMULATION_STEPS[selectedStep] || WORKFLOW_SIMULATION_STEPS[0];
 
   return (
-    <section id="architecture" className="py-20 relative bg-white border-t border-slate-200">
+    <section id="architecture" className="py-14 sm:py-20 relative bg-white border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
@@ -147,7 +147,7 @@ export const ArchitectureVisualizer: React.FC = () => {
         {/* Detailed Inspector Panel (2 Columns: JSON Payload & Real-time Execution Console) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Selected Node Payload Inspector */}
-          <div className="lg:col-span-7 rounded-2xl bg-white border border-slate-200 p-6 shadow-sm overflow-hidden">
+          <div className="lg:col-span-7 rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <Layers className="w-4 h-4 text-blue-600" />
@@ -183,7 +183,7 @@ export const ArchitectureVisualizer: React.FC = () => {
           </div>
 
           {/* Right: Real-time Execution Console */}
-          <div className="lg:col-span-5 rounded-2xl bg-white border border-slate-200 p-6 flex flex-col justify-between shadow-sm">
+          <div className="lg:col-span-5 rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 flex flex-col justify-between shadow-sm">
             <div>
               <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100">
                 <div className="flex items-center gap-2">

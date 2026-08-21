@@ -120,7 +120,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
         </div>
 
         {/* Streamlined & Short-to-the-Point: 3 Profit Killers vs Autonomous Fixes */}
-        <div className="mt-12 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
+        <div className="mt-10 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-5 border-b border-slate-100">
             <div>
               <span className="text-xs font-mono font-bold text-rose-600 uppercase tracking-wider">

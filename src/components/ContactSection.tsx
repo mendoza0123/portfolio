@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, MessageSquare, Send, Sparkles, CheckCircle2, ShieldCheck, ArrowRight, Phone, FileText } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { submitEnquiry } from '../lib/enquiry';
 
 interface ContactSectionProps {
   initialSubject?: string;
@@ -32,7 +33,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const [email, setEmail] = useState<string>('');
   const [company, setCompany] = useState<string>('');
   const [message, setMessage] = useState<string>(initialSubject ? `Inquiry regarding: ${initialSubject}` : '');
+  const [trap, setTrap] = useState<string>('');
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [sending, setSending] = useState<boolean>(false);
+  const [sendError, setSendError] = useState<string>('');
 
   useEffect(() => {
     if (initialSubject) {
@@ -40,9 +44,35 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     }
   }, [initialSubject]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email) return;
+    if (!name || !email || sending) return;
+
+    setSending(true);
+    setSendError('');
+
+    const result = await submitEnquiry({
+      form: 'Architecture Audit',
+      name,
+      email,
+      company,
+      interest: selectedType,
+      timeline: selectedTimeline,
+      message,
+      source: initialSubject,
+      trap,
+    });
+
+    setSending(false);
+
+    if (result.ok === false) {
+      setSendError(
+        result.reason === 'unconfigured'
+          ? 'The enquiry endpoint is not configured yet, so this was not recorded. Please email loharaditya301@gmail.com directly.'
+          : 'Could not reach the server. Please check your connection or email loharaditya301@gmail.com directly.'
+      );
+      return;
+    }
 
     setSubmitted(true);
     confetti({
@@ -54,7 +84,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   };
 
   return (
-    <section id="contact" className="py-20 relative bg-slate-50 border-t border-slate-200">
+    <section id="contact" className="py-14 sm:py-20 relative bg-slate-50 border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
@@ -154,6 +184,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <button
                     onClick={() => {
                       setSubmitted(false);
+                      setSendError('');
                       setName('');
                       setEmail('');
                       setCompany('');
@@ -267,13 +298,32 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     />
                   </div>
 
+                  {/* Honeypot: hidden from people, irresistible to bots */}
+                  <input
+                    type="text"
+                    name="company_website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    value={trap}
+                    onChange={(e) => setTrap(e.target.value)}
+                    className="absolute left-[-9999px] w-px h-px opacity-0"
+                  />
+
+                  {sendError && (
+                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-mono leading-relaxed">
+                      {sendError}
+                    </div>
+                  )}
+
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-mono text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all hover:scale-[1.01]"
+                    disabled={sending}
+                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-mono text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    <Send className="w-4 h-4" />
-                    <span>Submit Free Architecture Audit Request</span>
+                    <Send className={`w-4 h-4 ${sending ? 'animate-pulse' : ''}`} />
+                    <span>{sending ? 'Sending…' : 'Submit Free Architecture Audit Request'}</span>
                   </button>
                 </form>
               )}

@@ -612,7 +612,7 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
   };
 
   return (
-    <section id="voice-ai" className="py-20 relative bg-slate-50 border-t border-slate-200">
+    <section id="voice-ai" className="py-14 sm:py-20 relative bg-slate-50 border-t border-slate-200">
       {/* Real recording. Keyed so a source swap gets a fresh element + Web Audio graph. */}
       {activeAudioUrl && (
         <audio
@@ -915,7 +915,7 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
 
           {/* Right Column: Engine Specs & Direct Business Impact */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-5 shadow-sm">
+            <div className="rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 space-y-5 shadow-sm">
               <h3 className="font-heading text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Activity className="w-5 h-5 text-red-600" />
                 <span>Voice Architecture Specs</span>
