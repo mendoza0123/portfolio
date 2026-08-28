@@ -21,6 +21,11 @@ export const StickyMobileCta: React.FC<StickyMobileCtaProps> = ({ onOpenContact 
     const audit = document.getElementById('audit');
 
     const update = () => {
+      // A modal owns the bottom of the screen while it is open.
+      if (document.body.dataset.modalOpen === 'true') {
+        setVisible(false);
+        return;
+      }
       const scrolledPastHero = window.scrollY > 620;
       // Suppress the bar while either enquiry form is on screen.
       const overAForm = [contact, audit].some((el) => {
@@ -34,9 +39,13 @@ export const StickyMobileCta: React.FC<StickyMobileCtaProps> = ({ onOpenContact 
     update();
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
+    // Opening a modal fires no scroll event, so react to the attribute directly.
+    const observer = new MutationObserver(update);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-modal-open'] });
     return () => {
       window.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
+      observer.disconnect();
     };
   }, []);
 

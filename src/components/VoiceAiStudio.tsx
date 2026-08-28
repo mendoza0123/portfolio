@@ -192,6 +192,10 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
   const analyserRef = useRef<AnalyserNode | null>(null);
   const rafRef = useRef<number | null>(null);
   const barRefs = useRef<Array<HTMLDivElement | null>>([]);
+  // While a drag is in progress, timeupdate must not fight the slider for
+  // control of currentTime, or the thumb snaps back under the finger.
+  const isScrubbingRef = useRef<boolean>(false);
+  const pendingSeekRef = useRef<number | null>(null);
 
   const currentAgent: VoiceAgentSample = useMemo(() => {
     return VOICE_AGENT_DEMOS.find((a) => a.id === selectedAgentId) || VOICE_AGENT_DEMOS[0];
@@ -387,6 +391,7 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
 
   // Audio element time updates (when playing the real recording)
   const handleAudioTimeUpdate = () => {
+    if (isScrubbingRef.current) return;
     if (audioRef.current && isPlaying) {
       const t = audioRef.current.currentTime;
       if (t >= clipEnd) {
@@ -563,12 +568,37 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value);
+    pendingSeekRef.current = newTime;
     setCurrentTime(newTime);
     lastSpokenTurnIndexRef.current = null;
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
     }
   };
+
+  const beginScrub = () => {
+    isScrubbingRef.current = true;
+  };
+
+  // Read through a ref, so the window-level listeners below never close over a
+  // stale currentTime.
+  const endScrub = useCallback(() => {
+    if (!isScrubbingRef.current) return;
+    isScrubbingRef.current = false;
+    const target = pendingSeekRef.current;
+    if (target != null && audioRef.current) {
+      audioRef.current.currentTime = target;
+    }
+    pendingSeekRef.current = null;
+  }, []);
+
+  // A finger or cursor released off the slider still ends the drag; without
+  // this the scrub guard would latch on and freeze the playhead for good.
+  useEffect(() => {
+    const events = ['pointerup', 'pointercancel', 'touchend', 'touchcancel', 'mouseup'];
+    events.forEach((e) => window.addEventListener(e, endScrub));
+    return () => events.forEach((e) => window.removeEventListener(e, endScrub));
+  }, [endScrub]);
 
   // Jump to a turn using its scaled position, not its raw transcript timestamp.
   const handleTurnClick = (turnIdx: number) => {
@@ -806,10 +836,20 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
                   type="range"
                   min={clipStart}
                   max={clipEnd}
-                  step="0.25"
+                  step="0.1"
                   value={currentTime}
                   onChange={handleSeek}
-                  className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-red-600"
+                  onPointerDown={beginScrub}
+                  onPointerUp={endScrub}
+                  onPointerCancel={endScrub}
+                  onTouchStart={beginScrub}
+                  onTouchEnd={endScrub}
+                  onMouseDown={beginScrub}
+                  onMouseUp={endScrub}
+                  onKeyDown={beginScrub}
+                  onKeyUp={endScrub}
+                  aria-label="Seek within the call recording"
+                  className="audio-scrubber w-full bg-slate-200 rounded-lg appearance-none cursor-pointer accent-red-600"
                 />
               </div>
 
