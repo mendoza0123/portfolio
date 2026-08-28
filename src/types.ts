@@ -25,7 +25,15 @@ export interface ProjectBrief {
   id: string;
   briefNumber: string;
   title: string;
+  /** Technical one-liner. Shown only inside the technical panel. */
   subtitle: string;
+  /** Plain-language fields below drive the primary (business) view.
+   *  Everything technical stays behind the "For the Tech Team" toggle. */
+  plainSubtitle: string;
+  plainProblem: string;
+  plainSolution: string;
+  plainImpact: string;
+  plainTags: string[];
   category: ProjectCategory;
   clientContext: string;
   businessProblem: string;

@@ -95,8 +95,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Schedule a <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Free Architecture Audit</span>
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base mt-3 leading-relaxed">
-            Whether you want to automate 50 hours of repetitive data entry, deploy a sub-300ms bilingual phone receptionist, or replace chaotic Google Sheets with a private ERP — let’s map out the exact business blueprint.
+          <p className="text-base text-slate-600 mt-3 leading-snug sm:leading-relaxed">
+            Automate the repetitive data entry, put a bilingual AI receptionist on your phone line, or replace messy spreadsheets with a system you own. Tell us the bottleneck and we’ll map the fix.
           </p>
         </div>
 
@@ -149,16 +149,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 <div className="text-[11px] font-mono uppercase text-slate-500 font-bold mb-3 tracking-wider">
                   Audit Deliverables Include:
                 </div>
-                <div className="space-y-2.5 text-xs font-mono text-slate-700 font-medium">
-                  <div className="flex items-center gap-2">
+                <div className="flex sm:block gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0 sm:space-y-2.5 text-xs font-mono text-slate-700 font-medium">
+                  <div className="flex items-center gap-2 shrink-0 whitespace-nowrap bg-slate-50 sm:bg-transparent border sm:border-0 border-slate-200 rounded-full sm:rounded-none px-3 py-1.5 sm:p-0">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>Complete Workflow Diagram & ROI Projection</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0 whitespace-nowrap bg-slate-50 sm:bg-transparent border sm:border-0 border-slate-200 rounded-full sm:rounded-none px-3 py-1.5 sm:p-0">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>Self-Hosted VPS Setup & Token Cost Audit</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0 whitespace-nowrap bg-slate-50 sm:bg-transparent border sm:border-0 border-slate-200 rounded-full sm:rounded-none px-3 py-1.5 sm:p-0">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>Zero-Hallucination Data Guard Blueprint</span>
                   </div>
@@ -232,7 +232,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         placeholder="e.g. Rahul Mehta"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-base sm:text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                       />
                     </div>
 
@@ -246,7 +246,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         placeholder="rahul@company.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-base sm:text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -262,7 +262,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         placeholder="e.g. Apex Textiles / Studio"
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-base sm:text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                       />
                     </div>
 
@@ -273,7 +273,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       <select
                         value={selectedTimeline}
                         onChange={(e) => setSelectedTimeline(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-900 focus:outline-none focus:border-blue-500"
+                        className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-base sm:text-xs font-mono text-slate-900 focus:outline-none focus:border-blue-500"
                       >
                         {TIMELINE_OPTIONS.map((t) => (
                           <option key={t} value={t} className="bg-white text-slate-800">
@@ -294,7 +294,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       placeholder="Describe your current systems, volume (leads/day, order volume, manual tasks), or desired automation outcome..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      className="w-full px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-200 text-base sm:text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
 
@@ -320,7 +320,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <button
                     type="submit"
                     disabled={sending}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-mono text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full min-h-[48px] flex items-center justify-center gap-2 py-3.5 rounded-xl font-mono text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <Send className={`w-4 h-4 ${sending ? 'animate-pulse' : ''}`} />
                     <span>{sending ? 'Sending…' : 'Submit Free Architecture Audit Request'}</span>

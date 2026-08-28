@@ -377,6 +377,16 @@ export const PROJECT_BRIEFS: ProjectBrief[] = [
     briefNumber: 'Brief 01',
     title: 'Universal Lead-Generation Engine',
     subtitle: 'RAG-Deduplicated Multi-Source Prospecting Graph',
+    plainSubtitle: 'Finds new customers for you, without the repeat names',
+    plainProblem: 'Har campaign ke baad the same names kept coming back. The team lost days cleaning duplicate lists and calling people who were never going to buy.',
+    plainSolution: 'You fill one short form. The system searches for matching businesses, drops anyone already in your list, and writes clean decision-maker contacts into your sheet.',
+    plainImpact: 'A list that used to take two days of manual work now lands in under 20 seconds, with no repeats.',
+    plainTags: [
+      'No repeat leads',
+      'Ready in under 20s',
+      'Straight into your sheet',
+      'Works for any industry',
+    ],
     category: 'ai_automation',
     featured: true,
     clientContext: 'Multi-entity B2B enterprise requiring automated high-intent prospect generation across disparate industries.',
@@ -462,9 +472,9 @@ return [{ json: { pastLeadRegistry: pastLeads, totalHistoricalCount: pastLeads.l
       'Dynamic Agent Tool Pacing'
     ],
     metrics: [
-      { label: 'Dedup Accuracy', value: '100%' },
-      { label: 'Search Coverage', value: '3x Parallel' },
-      { label: 'Execution Speed', value: '< 18s / run' },
+      { label: 'Repeat Leads', value: 'Zero' },
+      { label: 'Sources Searched', value: '3 at once' },
+      { label: 'List Ready In', value: '< 18 sec' },
     ],
     defectLog: [
       {
@@ -480,6 +490,16 @@ return [{ json: { pastLeadRegistry: pastLeads, totalHistoricalCount: pastLeads.l
     briefNumber: 'Brief 02',
     title: 'Autonomous Lead-Research & Enrichment Pipeline',
     subtitle: 'Evidence-Locked Anti-Hallucination RAG Architecture',
+    plainSubtitle: 'Company details your team can actually trust',
+    plainProblem: 'AI tools were inventing revenue figures, staff counts and GST numbers. Reps quoted wrong details to clients and lost trust in the first meeting.',
+    plainSolution: 'Every detail is checked against a real source before it is saved. If the system cannot prove it, it leaves the field empty instead of guessing.',
+    plainImpact: '33 verified details per company, nothing invented, and the running cost cut by 64%.',
+    plainTags: [
+      'Nothing made up',
+      '33 details per company',
+      '64% cheaper to run',
+      'Blank beats wrong',
+    ],
     category: 'ai_automation',
     featured: true,
     clientContext: 'High-volume inbound sales pipeline processing cold textile and B2B manufacturer leads.',
@@ -567,9 +587,9 @@ return [{
       'Rigorous Defect Inventory Tracking'
     ],
     metrics: [
-      { label: 'Hallucination Rate', value: '0.0%' },
-      { label: 'Fields Extracted', value: '33 Columns' },
-      { label: 'Cost Reduction', value: '-64% vs V1' },
+      { label: 'Made-Up Facts', value: 'Zero' },
+      { label: 'Details Per Company', value: '33' },
+      { label: 'Running Cost', value: '-64%' },
     ],
     defectLog: [
       {
@@ -585,6 +605,16 @@ return [{
     briefNumber: 'Brief 04',
     title: 'Bilingual Voice AI Calling Agents',
     subtitle: 'Vapi.ai ("Monika") & Ringg AI ("Priya") Parity Suite',
+    plainSubtitle: 'A caller who speaks Hinglish and never misses a lead',
+    plainProblem: 'Leads went cold because nobody called back within 5 minutes. English-only bots could not follow Hindi or fabric terms, so customers simply hung up.',
+    plainSolution: 'Two AI agents call in natural Hinglish, ask the right questions in order, and write everything the customer said straight into your CRM.',
+    plainImpact: 'Replies in a quarter of a second, qualifies 78 out of every 100 callers, and runs at $0.11 a minute.',
+    plainTags: [
+      'Talks in Hinglish',
+      'Replies in 0.25s',
+      '78% qualified',
+      'Calls day and night',
+    ],
     category: 'voice_ai',
     featured: true,
     clientContext: 'High-speed textile manufacturing mill processing hundreds of daily fabric and printing inquiries.',
@@ -665,9 +695,9 @@ return [{
       'Multi-Platform Agent Parity'
     ],
     metrics: [
-      { label: 'Median Latency', value: '250ms' },
-      { label: 'Cost Per Minute', value: '$0.11 / min' },
-      { label: 'Qualification Rate', value: '78%' },
+      { label: 'Reply Speed', value: '0.25 sec' },
+      { label: 'Cost Per Minute', value: '$0.11' },
+      { label: 'Callers Qualified', value: '78%' },
     ],
     defectLog: [
       {
@@ -683,6 +713,16 @@ return [{
     briefNumber: 'Brief 05',
     title: 'Lead Management System & Orchestration Layer',
     subtitle: 'Event-Driven Auto-Pilot with Human-Takeover Lock',
+    plainSubtitle: 'AI handles the calls, your team steps in anytime',
+    plainProblem: 'Do log ek hi lead ko call kar dete the. Nobody knew who had spoken to whom, and there was no way to stop the AI once it was mid-conversation.',
+    plainSolution: 'One shared board everyone can see. The AI works through the queue on its own, and any staff member can take over a live conversation with a single click.',
+    plainImpact: 'No more double-calling, every lead contacted inside 45 seconds, and no cap on daily calls.',
+    plainTags: [
+      'No double-calling',
+      'Contacted in 45s',
+      'Take over anytime',
+      'No daily limit',
+    ],
     category: 'ai_automation',
     featured: true,
     clientContext: 'Central sales operations hub coordinating inbound enrichment and autonomous voice calling.',
@@ -764,9 +804,9 @@ export function claimLeadByHuman(lead: LeadState, operatorId: string): { success
       'Multi-Channel Automated Fan-Out'
     ],
     metrics: [
-      { label: 'Daily Calls', value: 'Unlimited (V2)' },
-      { label: 'Time-to-Engage', value: '< 45 seconds' },
-      { label: 'Sync Latency', value: '20s Heartbeat' },
+      { label: 'Daily Call Limit', value: 'None' },
+      { label: 'Lead Contacted In', value: '< 45 sec' },
+      { label: 'Board Refresh', value: '20 sec' },
     ]
   },
   {
@@ -774,6 +814,16 @@ export function claimLeadByHuman(lead: LeadState, operatorId: string): { success
     briefNumber: 'Brief 06',
     title: 'Textile Jobwork Production ERP',
     subtitle: 'Split Challans & Actuals-Based Invoicing Engine',
+    plainSubtitle: 'Bills the meters you actually produced, not the meters ordered',
+    plainProblem: 'Ek order kai challans mein jaata hai, each finishing on a different date. Normal ERPs cannot handle that, so billing was done by hand and money leaked every month.',
+    plainSolution: 'Built around how the mill actually runs: one order, many challans, and invoices raised on the meters really rolled.',
+    plainImpact: 'Billing matches production exactly, so nothing is under-billed or quietly written off.',
+    plainTags: [
+      'Bills actual meters',
+      'One order, many challans',
+      'No hand tallying',
+      'Built for jobwork',
+    ],
     category: 'enterprise_apps',
     featured: true,
     clientContext: 'Major digital sublimation print mill processing multi-stage variable textile orders.',
@@ -851,9 +901,9 @@ export function generateActualsInvoice(batch: ProductionBatch) {
       'Technical Developer Spec Authoring'
     ],
     metrics: [
-      { label: 'Order Processing', value: '100% Split-Safe' },
-      { label: 'Billing Leakage', value: '0.0%' },
-      { label: 'Stages Tracked', value: '8 Milestones' },
+      { label: 'Split Orders', value: 'Handled' },
+      { label: 'Billing Leakage', value: 'Zero' },
+      { label: 'Stages Tracked', value: '8' },
     ]
   }
 ];

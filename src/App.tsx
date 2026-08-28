@@ -6,6 +6,7 @@ import { ProjectsSection } from './components/ProjectsSection';
 import { VoiceAiStudio } from './components/VoiceAiStudio';
 import { GrowthAuditSection } from './components/GrowthAuditSection';
 import { Footer } from './components/Footer';
+import { StickyMobileCta } from './components/StickyMobileCta';
 import { MessageCircle } from 'lucide-react';
 
 export default function App() {
@@ -64,7 +65,7 @@ export default function App() {
         href="https://wa.me/918879940967?text=Hi%20Aditya,%20I%20would%20like%20to%20discuss%20an%20AI%20automation%20project%20for%20my%20business."
         target="_blank"
         rel="noreferrer"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/30 flex items-center justify-center transition-all hover:scale-110 group focus:outline-none"
+        className="hidden sm:flex fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/30 items-center justify-center transition-all hover:scale-110 group focus:outline-none"
         title="Chat on WhatsApp with Aditya Lohar"
         aria-label="Chat on WhatsApp with Aditya Lohar (+91 8879940967)"
       >
@@ -75,6 +76,9 @@ export default function App() {
           WhatsApp: +91 8879940967
         </span>
       </a>
+
+      {/* Phone-only action bar (replaces the floating bubble below sm) */}
+      <StickyMobileCta onOpenContact={handleOpenContact} />
 
       {/* Footer with Compliance & Specs */}
       <Footer />

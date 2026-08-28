@@ -53,13 +53,13 @@ export const ArchitectureVisualizer: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-mono text-xs mb-3 font-bold">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-              <span>ZERO-HALLUCINATION ARCHITECTURE SIMULATOR</span>
+              <span>SEE IT WORK, STEP BY STEP</span>
             </div>
             <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Live Autonomous Pipeline & <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">RAG Lock</span> Engine
+              How One Lead Becomes a <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Booked Meeting</span>
             </h2>
             <p className="text-slate-600 text-sm sm:text-base max-w-2xl mt-2 leading-relaxed">
-              Watch how our autonomous lead enrichment and voice qualification engine processes a live lead in seconds. Every fact is audited through an unalterable evidence gate to guarantee 0.0% hallucination.
+              Press play and watch a real enquiry move through the system in seconds — researched, called, qualified and logged. Every fact is checked against a source, so nothing is invented.
             </p>
           </div>
 

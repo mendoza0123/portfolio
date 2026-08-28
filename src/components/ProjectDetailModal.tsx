@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Terminal, ShieldAlert, CheckCircle2, Layers, Cpu, Server, ExternalLink, Code2, Sparkles } from 'lucide-react';
+import { X, Copy, Check, Terminal, ShieldAlert, CheckCircle2, Layers, Cpu, Server, ExternalLink, Code2, Sparkles, ChevronDown } from 'lucide-react';
 import { ProjectBrief } from '../types';
 
 interface ProjectDetailModalProps {
@@ -14,6 +14,8 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   onOpenContact,
 }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  // Technical detail is opt-in: business owners see outcomes, tech teams expand.
+  const [showTechnical, setShowTechnical] = useState<boolean>(false);
 
   if (!project) return null;
 
@@ -27,7 +29,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
       <div className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-slate-800 max-h-[90vh] flex flex-col">
         {/* Modal Top Bar */}
-        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-xl px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-xl px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="font-mono text-xs uppercase px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-bold">
               {project.briefNumber}
@@ -47,18 +49,15 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
         </div>
 
         {/* Scrollable Modal Body */}
-        <div className="p-6 sm:p-8 space-y-7 overflow-y-auto">
+        <div className="p-4 sm:p-8 space-y-5 sm:space-y-7 overflow-y-auto">
           {/* Header Title */}
           <div>
             <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               {project.title}
             </h2>
-            <p className="text-base text-blue-700 font-mono mt-1 font-semibold">
-              {project.subtitle}
+            <p className="text-[15px] sm:text-base text-slate-600 mt-1.5 font-sans leading-snug">
+              {project.plainSubtitle}
             </p>
-            <div className="mt-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-mono">
-              <strong className="text-slate-900 font-bold">Client Context:</strong> {project.clientContext}
-            </div>
           </div>
 
           {/* Key Metrics Grid */}
@@ -78,28 +77,70 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             ))}
           </div>
 
-          {/* Business Problem vs Solution Outcome */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4.5 rounded-xl bg-rose-50 border border-rose-200 space-y-2">
-              <div className="flex items-center gap-2 text-rose-700 text-xs font-mono font-bold uppercase">
+          {/* Problem -> Solution -> Impact, in the owner's language */}
+          <div className="space-y-3">
+            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 space-y-1.5">
+              <div className="flex items-center gap-2 text-rose-700 text-[11px] font-mono font-bold uppercase tracking-wider">
                 <ShieldAlert className="w-4 h-4" />
-                <span>The Core Bottleneck</span>
+                <span>The Problem</span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">
-                {project.businessProblem}
+              <p className="text-[15px] text-slate-700 leading-relaxed font-sans">
+                {project.plainProblem}
               </p>
             </div>
 
-            <div className="p-4.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
-              <div className="flex items-center gap-2 text-emerald-700 text-xs font-mono font-bold uppercase">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Engineered Solution & Result</span>
+            <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-1.5">
+              <div className="flex items-center gap-2 text-blue-700 text-[11px] font-mono font-bold uppercase tracking-wider">
+                <Layers className="w-4 h-4" />
+                <span>What We Built</span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">
-                {project.businessOutcome}
+              <p className="text-[15px] text-slate-700 leading-relaxed font-sans">
+                {project.plainSolution}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1.5">
+              <div className="flex items-center gap-2 text-emerald-700 text-[11px] font-mono font-bold uppercase tracking-wider">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>What It Saved</span>
+              </div>
+              <p className="text-[15px] text-slate-700 leading-relaxed font-sans">
+                {project.plainImpact}
               </p>
             </div>
           </div>
+
+          {/* Everything below this line is for engineers, hidden by default */}
+          <button
+            onClick={() => setShowTechnical((v) => !v)}
+            aria-expanded={showTechnical}
+            className="w-full min-h-[44px] flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs font-bold transition-all"
+          >
+            <span className="flex items-center gap-2">
+              <Code2 className="w-4 h-4 text-blue-300" />
+              <span>For the Tech Team &mdash; Full Architecture</span>
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 shrink-0 transition-transform ${showTechnical ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {showTechnical && (
+          <div className="space-y-7 pt-1">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-mono space-y-2">
+              <div>
+                <strong className="text-slate-900 font-bold">Technical summary:</strong> {project.subtitle}
+              </div>
+              <div>
+                <strong className="text-slate-900 font-bold">Client context:</strong> {project.clientContext}
+              </div>
+              <div>
+                <strong className="text-slate-900 font-bold">Problem:</strong> {project.businessProblem}
+              </div>
+              <div>
+                <strong className="text-slate-900 font-bold">Outcome:</strong> {project.businessOutcome}
+              </div>
+            </div>
 
           {/* End-to-End Node Flow Diagram */}
           <div className="space-y-3">
@@ -257,7 +298,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           {/* Demonstrates tags */}
           <div className="pt-1">
             <div className="text-xs font-mono uppercase text-slate-500 font-bold mb-2">
-              Transferable Engineering Competencies
+              Engineering Competencies
             </div>
             <div className="flex flex-wrap gap-2">
               {project.demonstrates.map((demo, dIdx) => (
@@ -270,22 +311,24 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
               ))}
             </div>
           </div>
+          </div>
+          )}
         </div>
 
         {/* Modal Bottom CTA Footer */}
-        <div className="sticky bottom-0 z-20 bg-white/95 backdrop-blur-xl px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="sticky bottom-0 z-20 bg-white/95 backdrop-blur-xl px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-xs font-mono text-slate-500 hidden sm:inline">
-            Technical Case Study &bullet; NDA Sanitized
+            Real project &bullet; details shared under NDA
           </span>
           <button
             onClick={() => {
               onClose();
               onOpenContact(`Inquiry regarding ${project.briefNumber}: ${project.title}`);
             }}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-mono text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto min-h-[44px] px-6 py-3 rounded-xl font-mono text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
           >
             <Sparkles className="w-3.5 h-3.5 text-blue-200" />
-            <span>Schedule Architecture Review on this System &rarr;</span>
+            <span>Build something like this &rarr;</span>
           </button>
         </div>
       </div>

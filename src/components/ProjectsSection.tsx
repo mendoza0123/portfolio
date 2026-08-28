@@ -15,64 +15,6 @@ const CATEGORY_TABS: { id: ProjectCategory; label: string; count?: number }[] = 
   { id: 'enterprise_apps', label: 'Manufacturing ERP' },
 ];
 
-const KEYWORDS_SET = new Set([
-  'rag',
-  'ai calling',
-  'voice ai',
-  'n8n',
-  'gpt-4o',
-  'gpt-4o-mini',
-  'anti-hallucination',
-  'lead-generation',
-  'lead-gen',
-  'pinecone',
-  'sub-300ms',
-  'vapi.ai',
-  'ringg ai',
-  'deepgram',
-  'elevenlabs',
-  'erp',
-  'challan',
-  'challans',
-  'whatsapp',
-  'autonomous',
-  'evidence-locked',
-  'zero-infra',
-]);
-
-const HIGHLIGHT_REGEX = /(RAG|AI Calling|Voice AI|VOICE AI|n8n|GPT-4o|GPT-4o-mini|Anti-Hallucination|Lead-Generation|Lead-Gen|Pinecone|Sub-300ms|Vapi\.ai|Ringg AI|Deepgram|ElevenLabs|ERP|Challans|Challan|WhatsApp|Autonomous|Evidence-Locked|Zero-Infra)/gi;
-
-function renderHighlightedText(text: string): React.ReactNode {
-  if (!text) return null;
-  const parts = text.split(HIGHLIGHT_REGEX);
-  return parts.map((part, idx) => {
-    if (KEYWORDS_SET.has(part.toLowerCase())) {
-      return (
-        <span
-          key={idx}
-          className="text-red-600 font-bold bg-red-50 px-1 py-0.5 rounded border border-red-200/80 inline-block my-0.5"
-        >
-          {part}
-        </span>
-      );
-    }
-    return part;
-  });
-}
-
-function isHighPriorityTag(tag: string): boolean {
-  const lower = tag.toLowerCase();
-  return (
-    lower.includes('rag') ||
-    lower.includes('ai') ||
-    lower.includes('voice') ||
-    lower.includes('calling') ||
-    lower.includes('hallucination') ||
-    lower.includes('erp') ||
-    lower.includes('n8n')
-  );
-}
-
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact }) => {
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -104,13 +46,13 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact 
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-700 font-mono text-xs mb-3 font-bold">
               <Layers className="w-3.5 h-3.5 text-red-600" />
-              <span>CORE ARCHITECTURES & PRODUCTION PROOFS</span>
+              <span>REAL PROJECTS, REAL NUMBERS</span>
             </div>
             <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Production Case Studies & <span className="bg-gradient-to-r from-red-600 via-rose-600 to-indigo-600 bg-clip-text text-transparent">Architecture Proofs</span>
+              What We Built & <span className="bg-gradient-to-r from-red-600 via-rose-600 to-indigo-600 bg-clip-text text-transparent">What It Saved</span>
             </h2>
             <p className="text-slate-600 text-sm sm:text-base max-w-2xl mt-2 leading-relaxed">
-              Click any project below to inspect exact API schemas, custom backend code, cost-reduction metrics, and documented edge-case resolutions.
+              Every system below runs in a real business today. Tap one for the full story — the technical detail is tucked inside for your tech team.
             </p>
           </div>
 
@@ -153,7 +95,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact 
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search stack, keywords, APIs..."
+              placeholder="Search projects..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-mono text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 shadow-sm"
@@ -167,7 +109,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact 
             <div
               key={brief.id}
               onClick={() => setSelectedProject(brief)}
-              className="group cursor-pointer rounded-2xl bg-white p-6 sm:p-7 border border-slate-200 hover:border-red-300 flex flex-col justify-between relative overflow-hidden transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              className="group cursor-pointer rounded-2xl bg-white p-4 sm:p-7 border border-slate-200 hover:border-red-300 flex flex-col justify-between relative overflow-hidden transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
             >
               {/* Top Meta Bar */}
               <div>
@@ -184,14 +126,24 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact 
                 <h3 className="font-heading text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors leading-snug">
                   {brief.title}
                 </h3>
-                <div className="text-xs font-mono text-slate-700 mt-1.5 mb-4 leading-relaxed">
-                  {renderHighlightedText(brief.subtitle)}
+                <div className="text-[13px] text-slate-700 mt-1.5 mb-3 leading-snug font-sans font-medium">
+                  {brief.plainSubtitle}
                 </div>
 
-                {/* Problem & Outcome Snippet */}
-                <p className="text-xs text-slate-600 leading-relaxed line-clamp-3 mb-5 font-sans">
-                  {brief.businessOutcome}
+                {/* The pain, in the owner's words */}
+                <p className="text-[13px] sm:text-sm text-slate-600 leading-relaxed line-clamp-3 mb-4 font-sans">
+                  {brief.plainProblem}
                 </p>
+
+                {/* What it saved */}
+                <div className="mb-4 p-3 rounded-xl bg-emerald-50/70 border border-emerald-200">
+                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-700 mb-1">
+                    Result
+                  </div>
+                  <p className="text-[13px] text-slate-700 leading-relaxed font-sans">
+                    {brief.plainImpact}
+                  </p>
+                </div>
 
                 {/* Metrics row */}
                 <div className="grid grid-cols-3 gap-2 mb-5 p-3 rounded-xl bg-slate-50 border border-slate-100">
@@ -212,29 +164,21 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact 
               <div>
                 {/* Tech Chips */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                  {brief.demonstrates.map((tag, tIdx) => {
-                    const isPriority = isHighPriorityTag(tag);
-                    return (
-                      <span
-                        key={tIdx}
-                        className={`px-2.5 py-1 rounded-full text-[11px] font-mono transition-colors flex items-center gap-1 ${
-                          isPriority
-                            ? 'bg-red-50 border border-red-200 text-red-700 font-bold'
-                            : 'bg-slate-100 border border-slate-200 text-slate-600'
-                        }`}
-                      >
-                        {isPriority && <span className="w-1.5 h-1.5 rounded-full bg-red-500" />}
-                        <span>{tag}</span>
-                      </span>
-                    );
-                  })}
+                  {brief.plainTags.map((tag, tIdx) => (
+                    <span
+                      key={tIdx}
+                      className="px-2.5 py-1 rounded-full text-[11px] font-sans font-medium bg-slate-100 border border-slate-200 text-slate-700"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
 
                 {/* Button Action */}
                 <button
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-mono text-xs font-bold bg-slate-50 group-hover:bg-red-600 text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-red-600 transition-all shadow-sm"
+                  className="w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold bg-slate-50 group-hover:bg-red-600 text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-red-600 transition-all shadow-sm"
                 >
-                  <span>Inspect Architecture & Code</span>
+                  <span>See how it works</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -244,7 +188,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact 
 
         {filteredProjects.length === 0 && (
           <div className="text-center py-16 text-slate-500 font-mono text-sm">
-            No technical briefs matched your filter query.
+            No projects matched your search.
           </div>
         )}
       </div>

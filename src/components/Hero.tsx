@@ -9,7 +9,7 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) => {
   return (
-    <section className="relative pt-32 pb-20 md:pt-36 md:pb-24 overflow-hidden frosted-grid">
+    <section className="relative pt-24 pb-12 sm:pt-32 sm:pb-20 md:pt-36 md:pb-24 overflow-hidden frosted-grid">
       {/* Light Frosted Background Ambient Accents */}
       <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] pointer-events-none -z-10" />
       <div className="absolute bottom-10 left-0 w-[450px] h-[450px] bg-indigo-400/10 rounded-full blur-[100px] pointer-events-none -z-10" />
@@ -32,7 +32,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
         </div>
 
         {/* Main Hero: Benefit Headline, CTAs, and Guarantees */}
-        <div className="max-w-4xl mx-auto text-center space-y-6">
+        <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
           <div className="relative inline-block">
             {/* Subtle Slow-Moving Radial Gradient Background Glow */}
             <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-indigo-500/15 to-emerald-500/10 rounded-3xl blur-2xl animate-slow-radial -z-10" />
@@ -49,15 +49,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
             </h1>
           </div>
 
-          <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed font-sans">
+          <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-snug sm:leading-relaxed font-sans">
             Stop manual operations. Start automated growth. We engineer AI workflows that reclaim 20+ hours weekly for your team.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
             <button
               onClick={() => onOpenContact('Free Systems & AI Growth Audit')}
-              className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-mono text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02]"
+              className="min-h-[48px] flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-mono text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02]"
             >
               <span>Get Free Growth Audit</span>
               <ArrowRight className="w-4 h-4" />
@@ -65,7 +65,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
 
             <a
               href="#solutions"
-              className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-mono text-xs sm:text-sm font-bold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 transition-all shadow-sm"
+              className="min-h-[48px] flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono text-sm font-bold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 transition-all shadow-sm"
             >
               <Sparkles className="w-3.5 h-3.5 text-blue-600" />
               <span>Explore Industry Solutions</span>
@@ -75,24 +75,25 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
               href="https://wa.me/918879940967?text=Hi%20Aditya,%20I%20would%20like%20to%20discuss%20an%20AI%20automation%20project"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-xs font-mono font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"
+              className="min-h-[48px] flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-xs font-mono font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"
             >
-              <span>Direct WhatsApp: +91 8879940967</span>
+              <span className="sm:hidden">WhatsApp us</span>
+              <span className="hidden sm:inline">Direct WhatsApp: +91 8879940967</span>
               <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
             </a>
           </div>
 
           {/* Quick Guarantees Badge List */}
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-y-2 gap-x-5 text-xs text-slate-600 font-mono">
-            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-slate-200 shadow-xs">
+          <div className="pt-1 sm:pt-2 flex sm:flex-wrap items-center sm:justify-center gap-2 sm:gap-x-5 sm:gap-y-2 text-xs text-slate-600 font-mono overflow-x-auto hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
+            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-xs shrink-0 snap-start whitespace-nowrap">
               <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
               <span>100% Owned Code & Server</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-slate-200 shadow-xs">
+            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-xs shrink-0 snap-start whitespace-nowrap">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>Zero SaaS Subscription Tax</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-slate-200 shadow-xs">
+            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-xs shrink-0 snap-start whitespace-nowrap">
               <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
               <span>Strict NDA & Data Privacy</span>
             </div>
@@ -100,11 +101,11 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
         </div>
 
         {/* Executive Metric Highlights Row */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="mt-8 sm:mt-12 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
           {HERO_STATS.map((stat, idx) => (
             <div
               key={idx}
-              className="p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-xs text-center"
+              className="p-3 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-xs text-center"
             >
               <div className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 {stat.value}

@@ -164,7 +164,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                       placeholder="e.g. Aditya Lohar / Founder Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-xs"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-base sm:text-xs"
                     />
                   </div>
 
@@ -178,7 +178,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                       placeholder="e.g. Apex Textiles / yourbrand.com"
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-xs"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-base sm:text-xs"
                     />
                   </div>
 
@@ -193,7 +193,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                         placeholder="+91 8879940967"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-xs"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-base sm:text-xs"
                       />
                     </div>
 
@@ -207,7 +207,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                         placeholder="you@company.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-xs"
+                        className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-base sm:text-xs"
                       />
                     </div>
                   </div>
@@ -220,7 +220,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                     <select
                       value={serviceFocus}
                       onChange={(e) => setServiceFocus(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-blue-500 transition-all font-mono text-xs"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-blue-500 transition-all font-mono text-base sm:text-xs"
                     >
                       <option value="Manufacturing & Factory Automation">Manufacturing & Factory Floor Automation</option>
                       <option value="E-Commerce Cart & Return Recovery">E-Commerce Cart Recovery & RTO Reduction</option>
@@ -240,7 +240,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                       placeholder="e.g. Too many manual spreadsheets, slow lead response time, high Zapier bills..."
                       value={bottleneck}
                       onChange={(e) => setBottleneck(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-xs"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-base sm:text-xs"
                     />
                   </div>
 
@@ -266,7 +266,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
                   <button
                     type="submit"
                     disabled={sending}
-                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-mono text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full min-h-[48px] flex items-center justify-center gap-2 py-4 rounded-xl font-mono text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <span>{sending ? 'Sending…' : 'Start a Conversation →'}</span>
                   </button>

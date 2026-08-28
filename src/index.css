@@ -154,3 +154,17 @@
 
 
 
+
+/* Horizontal badge/chip scrollers on mobile: keep the swipe, drop the bar. */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sticky mobile CTA sits above the viewport's safe area on notched phones. */
+.safe-bottom {
+  padding-bottom: max(0.625rem, env(safe-area-inset-bottom));
+}
