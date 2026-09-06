@@ -39,7 +39,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onOpenContact 
   }, [activeCategory, searchQuery, featuredOnly]);
 
   return (
-    <section id="projects" className="py-14 sm:py-20 relative bg-white border-t border-slate-200">
+    <section id="projects" className="py-24 sm:py-40 relative bg-white border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">

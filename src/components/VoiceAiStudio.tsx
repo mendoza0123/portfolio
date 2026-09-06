@@ -15,6 +15,8 @@ import {
   Radio,
   FileAudio,
   Info,
+  ChevronDown,
+  FileText,
 } from 'lucide-react';
 import { VOICE_AGENT_DEMOS } from '../data/portfolioData';
 import { VoiceAgentSample } from '../types';
@@ -172,6 +174,9 @@ function estimateSpeechSeconds(text: string): number {
 export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) => {
   const [selectedAgentId, setSelectedAgentId] = useState<string>('vapi-monika');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  // Heavy text stays folded until asked for. The player is the headline.
+  const [showTranscript, setShowTranscript] = useState<boolean>(false);
+  const [showSpecs, setShowSpecs] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [isMuted, setIsMuted] = useState<boolean>(false);
@@ -522,13 +527,14 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
 
   // Auto-scroll transcript to active turn
   useEffect(() => {
+    if (!showTranscript) return; // nothing rendered to scroll
     if (isPlaying && activeTurnRef.current && transcriptScrollRef.current) {
       activeTurnRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
     }
-  }, [activeTranscriptIndex, isPlaying]);
+  }, [activeTranscriptIndex, isPlaying, showTranscript]);
 
   const startPlayback = (fromTime: number) => {
     lastSpokenTurnIndexRef.current = null;
@@ -642,7 +648,7 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
   };
 
   return (
-    <section id="voice-ai" className="py-14 sm:py-20 relative bg-slate-50 border-t border-slate-200">
+    <section id="voice-ai" className="py-24 sm:py-40 relative bg-slate-50 border-t border-slate-200">
       {/* Real recording. Keyed so a source swap gets a fresh element + Web Audio graph. */}
       {activeAudioUrl && (
         <audio
@@ -805,8 +811,8 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
                       <Play className="w-3.5 h-3.5 fill-white" />
                       <span>
                         {currentTime > clipStart
-                          ? 'Resume Audio'
-                          : `Play ${currentAgent.name.split(' (')[0]} Call (${formatTime(clipLength)})`}
+                          ? 'Resume call'
+                          : `Listen to a live call (${formatTime(clipLength)})`}
                       </span>
                     </>
                   )}
@@ -880,10 +886,29 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
               </div>
             </div>
 
-            {/* Real-time Dialogue Transcript with Clickable Turns */}
+            {/* Transcript, folded by default: the recording is the point, the text is reference */}
+            <button
+              type="button"
+              onClick={() => setShowTranscript((v) => !v)}
+              aria-expanded={showTranscript}
+              aria-controls="call-transcript"
+              className="w-full min-h-[44px] flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 font-mono text-xs font-bold text-slate-800 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-red-600" />
+                <span>Read Call Transcript</span>
+                <span className="text-[10px] font-normal text-slate-500">
+                  ({currentAgent.transcript.length} turns, Hinglish)
+                </span>
+              </span>
+              <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showTranscript ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showTranscript && (
             <div
+              id="call-transcript"
               ref={transcriptScrollRef}
-              className="space-y-3 max-h-[380px] overflow-y-auto pr-1.5 scroll-smooth"
+              className="mt-3 space-y-3 max-h-[380px] overflow-y-auto pr-1.5 scroll-smooth"
             >
               {currentAgent.transcript.map((turn, tIdx) => {
                 const isCurrent = tIdx === activeTranscriptIndex;
@@ -951,16 +976,49 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
                 );
               })}
             </div>
+            )}
           </div>
 
-          {/* Right Column: Engine Specs & Direct Business Impact */}
+          {/* Right Column: what this means for the business; specs folded away */}
           <div className="lg:col-span-5 space-y-6">
             <div className="rounded-2xl bg-white border border-slate-200 p-4 sm:p-6 space-y-5 shadow-sm">
               <h3 className="font-heading text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Activity className="w-5 h-5 text-red-600" />
-                <span>Voice Architecture Specs</span>
+                <PhoneCall className="w-5 h-5 text-red-600" />
+                <span>What you just heard</span>
               </h3>
 
+              <ul className="space-y-2.5 text-sm text-slate-700 leading-snug">
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>A real outbound sales call, answered by AI in natural Hinglish.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>It asks one question at a time and remembers every answer.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Runs day and night at <strong className="text-slate-900">{currentAgent.costPerMin}</strong>, no salary, no sick days.</span>
+                </li>
+              </ul>
+
+              {/* Everything an engineer would ask about, one tap away and closed by default */}
+              <button
+                type="button"
+                onClick={() => setShowSpecs((v) => !v)}
+                aria-expanded={showSpecs}
+                aria-controls="voice-specs"
+                className="w-full min-h-[44px] flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 font-mono text-xs font-bold text-slate-700 transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-slate-500" />
+                  <span>View Technical Specs</span>
+                </span>
+                <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showSpecs ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showSpecs && (
+              <div id="voice-specs" className="space-y-5">
               <div className="space-y-2.5 font-mono text-xs text-slate-700">
                 <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-slate-500">Core Telephony LLM:</span>
@@ -997,6 +1055,8 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
                   ))}
                 </ul>
               </div>
+              </div>
+              )}
 
               {/* Consultation CTA */}
               <div className="pt-3 border-t border-slate-100">

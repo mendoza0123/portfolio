@@ -51,7 +51,7 @@ export const GrowthAuditSection: React.FC<GrowthAuditSectionProps> = () => {
   };
 
   return (
-    <section id="audit" className="py-14 sm:py-20 relative bg-slate-900 text-white overflow-hidden">
+    <section id="audit" className="py-24 sm:py-40 relative bg-slate-900 text-white overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none" />

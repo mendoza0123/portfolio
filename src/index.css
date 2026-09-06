@@ -209,3 +209,26 @@
   box-shadow: 0 1px 4px rgb(15 23 42 / 0.35);
   cursor: pointer;
 }
+
+/* Hero trust ticker: one seamless loop of a duplicated track. */
+@keyframes ticker-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+.ticker-track {
+  animation: ticker-scroll 38s linear infinite;
+  will-change: transform;
+}
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+/* Soft edge fade so items appear to slide in from nothing. */
+.ticker {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+  .ticker { -webkit-mask-image: none; mask-image: none; }
+}

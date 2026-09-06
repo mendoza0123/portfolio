@@ -1,11 +1,53 @@
 import React from 'react';
-import { Terminal, Shield, Zap, ArrowRight, Play, Server, Code2, Bot, Layers, CheckCircle2, ChevronRight, Sparkles, TrendingUp, Clock, DollarSign, ShieldAlert, PhoneCall, CheckCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Sparkles, TrendingUp, Clock, DollarSign, CheckCircle } from 'lucide-react';
 import { HERO_STATS } from '../data/portfolioData';
+import { SkillSphere } from './SkillSphere';
 
 interface HeroProps {
   onOpenContact: (subject?: string) => void;
   onRunSimulation: () => void;
 }
+
+const TRUST_BADGES = [
+  { label: '100% Owned Code & Server', tone: 'text-blue-600' },
+  { label: 'Zero SaaS Subscription Tax', tone: 'text-emerald-600' },
+  { label: 'Strict NDA & Data Privacy', tone: 'text-indigo-600' },
+];
+
+/** Stats and trust badges as one quiet ticker instead of eight stacked tiles. */
+const HeroTicker: React.FC = () => {
+  const items = [
+    ...HERO_STATS.map((s) => ({ kind: 'stat' as const, value: s.value, label: s.label })),
+    ...TRUST_BADGES.map((b) => ({ kind: 'badge' as const, value: '', label: b.label, tone: b.tone })),
+  ];
+  // Two copies back to back; the track translates -50% for a seamless loop.
+  const track = [...items, ...items];
+  return (
+    <div className="ticker relative mt-10 sm:mt-14 overflow-hidden" aria-label="Track record and guarantees">
+      <div className="ticker-track flex w-max items-center gap-3 sm:gap-4">
+        {track.map((it, i) => (
+          <div
+            key={i}
+            aria-hidden={i >= items.length}
+            className="flex items-center gap-2 shrink-0 whitespace-nowrap px-4 py-2 rounded-full bg-white/80 border border-slate-200 shadow-xs backdrop-blur-sm"
+          >
+            {it.kind === 'stat' ? (
+              <>
+                <span className="font-heading text-sm sm:text-base font-extrabold text-slate-900">{it.value}</span>
+                <span className="text-[11px] sm:text-xs text-slate-600 font-medium">{it.label}</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className={`w-3.5 h-3.5 ${it.tone}`} />
+                <span className="text-[11px] sm:text-xs font-mono font-semibold text-slate-700">{it.label}</span>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) => {
   return (
@@ -31,94 +73,57 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
           </div>
         </div>
 
-        {/* Main Hero: Benefit Headline, CTAs, and Guarantees */}
-        <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
-          <div className="relative inline-block">
-            {/* Subtle Slow-Moving Radial Gradient Background Glow */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-indigo-500/15 to-emerald-500/10 rounded-3xl blur-2xl animate-slow-radial -z-10" />
-            
-            <h1 className="font-heading text-3xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight text-slate-900 leading-[1.15]">
-              I build autonomous AI systems that{' '}
-              <span className="relative inline-block px-2 py-0.5">
-                <span className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-lg -rotate-1 scale-105" />
-                <span className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent animate-text-shimmer font-black">
-                  cut 80% of manual work
-                </span>
-              </span>{' '}
-              and scale your revenue.
-            </h1>
+        {/* Main Hero: headline + CTAs on the left, Skill Sphere on the right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-6 items-center">
+          <div className="lg:col-span-7 text-center lg:text-left space-y-5 sm:space-y-6">
+            <div className="relative inline-block">
+              {/* Subtle Slow-Moving Radial Gradient Background Glow */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-indigo-500/15 to-emerald-500/10 rounded-3xl blur-2xl animate-slow-radial -z-10" />
+
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+                I build autonomous AI systems that{' '}
+                <span className="relative inline-block px-2 py-0.5">
+                  <span className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-lg -rotate-1 scale-105" />
+                  <span className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent animate-text-shimmer font-black">
+                    cut 80% of manual work
+                  </span>
+                </span>{' '}
+                and scale your revenue.
+              </h1>
+            </div>
+
+            <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto lg:mx-0 font-normal leading-snug sm:leading-relaxed font-sans">
+              Stop manual operations. Start automated growth. We engineer AI workflows that reclaim 20+ hours weekly for your team.
+            </p>
+
+            {/* CTAs — contact details live in the sticky bar, footer and contact section, not here */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
+              <button
+                onClick={() => onOpenContact('Free Systems & AI Growth Audit')}
+                className="min-h-[48px] flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-mono text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02]"
+              >
+                <span>Get Free Growth Audit</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <a
+                href="#solutions"
+                className="min-h-[48px] flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono text-sm font-bold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 transition-all shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                <span>Explore Industry Solutions</span>
+              </a>
+            </div>
           </div>
 
-          <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-snug sm:leading-relaxed font-sans">
-            Stop manual operations. Start automated growth. We engineer AI workflows that reclaim 20+ hours weekly for your team.
-          </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
-            <button
-              onClick={() => onOpenContact('Free Systems & AI Growth Audit')}
-              className="min-h-[48px] flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-mono text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02]"
-            >
-              <span>Get Free Growth Audit</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <a
-              href="#solutions"
-              className="min-h-[48px] flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono text-sm font-bold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 transition-all shadow-sm"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-              <span>Explore Industry Solutions</span>
-            </a>
-
-            <a
-              href="https://wa.me/918879940967?text=Hi%20Aditya,%20I%20would%20like%20to%20discuss%20an%20AI%20automation%20project"
-              target="_blank"
-              rel="noreferrer"
-              className="min-h-[48px] flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-xs font-mono font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"
-            >
-              <span className="sm:hidden">WhatsApp us</span>
-              <span className="hidden sm:inline">Direct WhatsApp: +91 8879940967</span>
-              <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
-            </a>
-          </div>
-
-          {/* Quick Guarantees Badge List */}
-          <div className="pt-1 sm:pt-2 flex sm:flex-wrap items-center sm:justify-center gap-2 sm:gap-x-5 sm:gap-y-2 text-xs text-slate-600 font-mono overflow-x-auto hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
-            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-xs shrink-0 snap-start whitespace-nowrap">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-              <span>100% Owned Code & Server</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-xs shrink-0 snap-start whitespace-nowrap">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Zero SaaS Subscription Tax</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-xs shrink-0 snap-start whitespace-nowrap">
-              <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Strict NDA & Data Privacy</span>
-            </div>
+          {/* Interactive 3D Skill Sphere: right column on desktop, under the CTAs on mobile */}
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <SkillSphere className="w-full max-w-[340px] sm:max-w-[440px] lg:max-w-[520px]" />
           </div>
         </div>
 
-        {/* Executive Metric Highlights Row */}
-        <div className="mt-8 sm:mt-12 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
-          {HERO_STATS.map((stat, idx) => (
-            <div
-              key={idx}
-              className="p-3 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-xs text-center"
-            >
-              <div className="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {stat.value}
-              </div>
-              <div className="text-xs text-slate-600 font-semibold mt-1">
-                {stat.label}
-              </div>
-              <div className="text-[10px] font-mono text-blue-700 mt-1 uppercase tracking-wider font-bold">
-                {stat.change}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* One quiet strip replaces four stat tiles and three badge pills */}
+        <HeroTicker />
 
         {/* Streamlined & Short-to-the-Point: 3 Profit Killers vs Autonomous Fixes */}
         <div className="mt-10 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
