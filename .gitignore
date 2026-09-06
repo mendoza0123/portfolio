@@ -11,3 +11,6 @@ coverage/
 # files served from public/audio/ — commit one copy, not two.
 /monika calling agent.mp3
 /Priya calling agent.mp3
+
+# Claude Code session state and agent worktrees are machine-local, never source.
+.claude/
