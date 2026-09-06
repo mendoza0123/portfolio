@@ -24,7 +24,7 @@ const HeroTicker: React.FC = () => {
   const track = [...items, ...items];
   return (
     <div className="ticker relative mt-10 sm:mt-14 overflow-hidden" aria-label="Track record and guarantees">
-      <div className="ticker-track flex w-max items-center gap-3 sm:gap-4">
+      <div className="ticker-track flex w-max items-center gap-3 sm:gap-4 pr-3 sm:pr-4">
         {track.map((it, i) => (
           <div
             key={i}
@@ -51,7 +51,7 @@ const HeroTicker: React.FC = () => {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) => {
   return (
-    <section className="relative pt-24 pb-12 sm:pt-32 sm:pb-20 md:pt-36 md:pb-24 overflow-hidden frosted-grid">
+    <section className="relative pt-24 pb-24 sm:pt-32 sm:pb-40 md:pt-36 overflow-hidden frosted-grid">
       {/* Light Frosted Background Ambient Accents */}
       <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] pointer-events-none -z-10" />
       <div className="absolute bottom-10 left-0 w-[450px] h-[450px] bg-indigo-400/10 rounded-full blur-[100px] pointer-events-none -z-10" />
@@ -75,12 +75,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
 
         {/* Main Hero: headline + CTAs on the left, Skill Sphere on the right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-6 items-center">
-          <div className="lg:col-span-7 text-center lg:text-left space-y-5 sm:space-y-6">
+          <div className="lg:col-span-8 xl:col-span-7 text-center lg:text-left space-y-5 sm:space-y-6">
             <div className="relative inline-block">
               {/* Subtle Slow-Moving Radial Gradient Background Glow */}
               <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-indigo-500/15 to-emerald-500/10 rounded-3xl blur-2xl animate-slow-radial -z-10" />
 
-              <h1 className="font-heading text-3xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-[40px] xl:text-[54px] font-extrabold tracking-tight text-slate-900 leading-[1.15]">
                 I build autonomous AI systems that{' '}
                 <span className="relative inline-block px-2 py-0.5">
                   <span className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-lg -rotate-1 scale-105" />
@@ -97,10 +97,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
             </p>
 
             {/* CTAs — contact details live in the sticky bar, footer and contact section, not here */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-center lg:justify-start gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
               <button
                 onClick={() => onOpenContact('Free Systems & AI Growth Audit')}
-                className="min-h-[48px] flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-mono text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02]"
+                className="min-h-[48px] whitespace-nowrap flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-mono text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02]"
               >
                 <span>Get Free Growth Audit</span>
                 <ArrowRight className="w-4 h-4" />
@@ -108,7 +108,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
 
               <a
                 href="#solutions"
-                className="min-h-[48px] flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono text-sm font-bold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 transition-all shadow-sm"
+                className="min-h-[48px] whitespace-nowrap flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-mono text-sm font-bold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 transition-all shadow-sm"
               >
                 <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                 <span>Explore Industry Solutions</span>
@@ -117,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onRunSimulation }) =>
           </div>
 
           {/* Interactive 3D Skill Sphere: right column on desktop, under the CTAs on mobile */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+          <div className="lg:col-span-4 xl:col-span-5 flex justify-center lg:justify-end">
             <SkillSphere className="w-full max-w-[340px] sm:max-w-[440px] lg:max-w-[520px]" />
           </div>
         </div>

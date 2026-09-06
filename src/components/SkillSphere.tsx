@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
 /**
  * SkillSphere
@@ -52,6 +52,11 @@ const SKILLS: Skill[] = [
 const MAX_SIZE = 520; // px, square
 const MAX_DPR = 2; // wireframe lines are faint; 2x is plenty and kinder to phones
 const TILT = (23 * Math.PI) / 180; // axial tilt in screen plane
+const LEAN = (10 * Math.PI) / 180; // constant lean toward the viewer: parallels read as ellipses, pole visible
+const MAX_VELOCITY = 0.012; // rad / ms, caps a violent fling
+const PITCH_TAU = 700; // ms, pitch springs back to the tilted-axis pose after a vertical drag
+const VEL_TAU = 40; // ms, time-based low-pass so 60 Hz mouse and 120 Hz touch fling alike
+const WIRE_BANDS = 5; // graded back->front alpha instead of a hard hemisphere split
 const AUTO_RATE = 0.2; // rad / s
 const CAMERA = 3.6; // camera distance in sphere radii (perspective strength)
 const RADIUS_FRAC = 0.35; // sphere radius as a fraction of container size
@@ -64,7 +69,7 @@ const MIN_VELOCITY = 0.00006; // rad / ms, below this momentum is considered fin
 const RESUME_DELAY = 500; // ms after release before auto-spin starts easing back in
 const RESUME_DURATION = 1600; // ms to fully resume auto-spin
 const INTENT_DISTANCE = 8; // px of travel before we decide horizontal vs vertical
-const INTENT_RATIO = 1.25; // |dx| must exceed |dy| * ratio to count as horizontal
+const INTENT_RATIO = 1; // |dx| > |dy|: the exact complement of the browser's pan-y axis test, so no angle is dead
 
 // ---------------------------------------------------------------------------
 // Geometry helpers
@@ -133,6 +138,17 @@ function rotationMatrix(yaw: number, pitch: number, tilt: number, m: Float64Arra
   m[6] = -cp * sy;
   m[7] = sp;
   m[8] = cp * cy;
+  // Lean the whole frame toward the viewer: rows 1 and 2 mix under Rx(LEAN).
+  const cl = Math.cos(LEAN);
+  const sl = Math.sin(LEAN);
+  const r3 = m[3], r4 = m[4], r5 = m[5];
+  const r6 = m[6], r7 = m[7], r8 = m[8];
+  m[3] = cl * r3 - sl * r6;
+  m[4] = cl * r4 - sl * r7;
+  m[5] = cl * r5 - sl * r8;
+  m[6] = sl * r3 + cl * r6;
+  m[7] = sl * r4 + cl * r7;
+  m[8] = sl * r5 + cl * r8;
 }
 
 function easeInOut(t: number): number {
@@ -147,8 +163,9 @@ function clamp(v: number, lo: number, hi: number): number {
 // Theme
 // ---------------------------------------------------------------------------
 interface Palette {
-  wireFront: string;
-  wireBack: string;
+  wire: string;
+  wireAlphaFront: number;
+  wireAlphaBack: number;
   rim: string;
   bodyInner: string;
   bodyMid: string;
@@ -159,24 +176,26 @@ interface Palette {
 
 const PALETTES: Record<Variant, Palette> = {
   light: {
-    wireFront: 'rgba(51, 65, 85, 0.17)',
-    wireBack: 'rgba(51, 65, 85, 0.055)',
+    wire: 'rgb(51, 65, 85)',
+    wireAlphaFront: 0.17,
+    wireAlphaBack: 0.055,
     rim: 'rgba(15, 23, 42, 0.10)',
     bodyInner: 'rgba(255, 255, 255, 0.95)',
     bodyMid: 'rgba(241, 245, 249, 0.75)',
     bodyOuter: 'rgba(203, 213, 225, 0.42)',
     pill:
-      'bg-white/90 text-slate-700 border-slate-200/90 shadow-[0_1px_2px_rgba(15,23,42,0.06),0_6px_16px_-8px_rgba(15,23,42,0.18)]',
+      'bg-white/95 text-slate-700 shadow-[0_1px_2px_rgba(15,23,42,0.06),0_6px_16px_-8px_rgba(15,23,42,0.18)]',
     glow: 'radial-gradient(circle at 50% 48%, rgba(59,130,246,0.10) 0%, rgba(99,102,241,0.05) 40%, rgba(255,255,255,0) 68%)',
   },
   dark: {
-    wireFront: 'rgba(226, 232, 240, 0.20)',
-    wireBack: 'rgba(226, 232, 240, 0.06)',
+    wire: 'rgb(226, 232, 240)',
+    wireAlphaFront: 0.2,
+    wireAlphaBack: 0.06,
     rim: 'rgba(255, 255, 255, 0.12)',
     bodyInner: 'rgba(71, 85, 105, 0.55)',
     bodyMid: 'rgba(30, 41, 59, 0.55)',
     bodyOuter: 'rgba(15, 23, 42, 0.25)',
-    pill: 'bg-slate-800/85 text-slate-100 border-white/10 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)]',
+    pill: 'bg-slate-800/95 text-slate-100 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)]',
     glow: 'radial-gradient(circle at 50% 48%, rgba(96,165,250,0.16) 0%, rgba(129,140,248,0.07) 40%, rgba(15,23,42,0) 68%)',
   },
 };
@@ -190,7 +209,7 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const palette = PALETTES[variant];
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
@@ -213,13 +232,14 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     let silhouette = 0;
 
     let yaw = 0.6;
-    let pitch = 0.18;
+    let pitch = 0;
     let velYaw = 0; // rad / ms
     let velPitch = 0; // rad / ms
     let releasedAt = -1; // ms timestamp of last drag release (-1 = never / consumed)
     let resume = 1; // 0..1 blend of auto-spin after a drag
 
-    let rafId = 0;
+    let rafId = 0; // the animation loop
+    let paintId = 0; // a single deferred render (drag frame / static repaint)
     let lastFrame = 0;
     let visible = false;
     let pageHidden = typeof document !== 'undefined' && document.hidden;
@@ -229,7 +249,6 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     // pointer state
     let activePointer: number | null = null;
     let engaged = false; // gesture claimed by the sphere
-    let rejected = false; // gesture handed to the browser (vertical scroll)
     let startX = 0;
     let startY = 0;
     let lastX = 0;
@@ -237,12 +256,15 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     let lastMoveT = 0;
 
     const labels = labelRefs.current;
+    const lastZ = new Int16Array(SKILLS.length).fill(-1);
 
     // ----- rendering ------------------------------------------------------
     const render = () => {
       if (size === 0) return;
       rotationMatrix(yaw, pitch, TILT, matrix);
-      const [m0, m1, m2, m3, m4, m5, m6, m7, m8] = matrix as unknown as number[];
+      const m0 = matrix[0], m1 = matrix[1], m2 = matrix[2];
+      const m3 = matrix[3], m4 = matrix[4], m5 = matrix[5];
+      const m6 = matrix[6], m7 = matrix[7], m8 = matrix[8];
       const cx = size / 2;
       const cy = size / 2;
 
@@ -275,27 +297,36 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
         projected[i + 2] = rz;
       }
 
-      // Two passes: back hemisphere (faint) then front hemisphere
+      // Graded depth: bucket every segment by its depth into a few alpha bands
+      // and stroke one path per band, back to front. A handful of strokes, no
+      // hard seam where a meridian crosses the limb.
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
-      for (let pass = 0; pass < 2; pass++) {
-        const front = pass === 1;
+      ctx.strokeStyle = pal.wire;
+      for (let band = 0; band < WIRE_BANDS; band++) {
+        const t = (band + 0.5) / WIRE_BANDS; // band centre, 0 = far, 1 = near
         ctx.beginPath();
+        let any = false;
         for (let c = 0; c < wire.circles; c++) {
           const base = c * SEGMENTS * 3;
           for (let s = 0; s < SEGMENTS; s++) {
             const a = base + s * 3;
             const b = base + ((s + 1) % SEGMENTS) * 3;
-            const zAvg = (projected[a + 2] + projected[b + 2]) * 0.5;
-            if (zAvg >= 0 !== front) continue;
+            const zAvg = (projected[a + 2] + projected[b + 2]) * 0.5; // -1..1
+            const d = (zAvg + 1) * 0.5;
+            const sm = d * d * (3 - 2 * d); // smoothstep
+            if (Math.floor(sm * WIRE_BANDS) !== band && !(band === WIRE_BANDS - 1 && sm >= 1)) continue;
             ctx.moveTo(projected[a], projected[a + 1]);
             ctx.lineTo(projected[b], projected[b + 1]);
+            any = true;
           }
         }
-        ctx.lineWidth = front ? 1 : 0.8;
-        ctx.strokeStyle = front ? pal.wireFront : pal.wireBack;
+        if (!any) continue;
+        ctx.globalAlpha = pal.wireAlphaBack + (pal.wireAlphaFront - pal.wireAlphaBack) * t * t;
+        ctx.lineWidth = 0.8 + 0.2 * t;
         ctx.stroke();
       }
+      ctx.globalAlpha = 1;
 
       // Labels (DOM), driven by the same projection
       for (let i = 0; i < SKILLS.length; i++) {
@@ -312,11 +343,17 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
         const sy = cy - ry * radius * f;
         const depth = (rz + 1) * 0.5; // 0 = far, 1 = near
         const eased = depth * depth * (3 - 2 * depth); // smoothstep
-        const scale = 0.7 + 0.38 * eased;
-        const opacity = 0.14 + 0.86 * Math.pow(eased, 1.7);
+        // Under reduced motion nothing spins, so lift the floor: the back half must stay readable.
+        const floor = reducedMotion ? 0.62 : 0.14;
+        const scale = 0.7 + (reducedMotion ? 0.25 : 0.38) * eased;
+        const opacity = floor + (1 - floor) * Math.pow(eased, 1.7);
         el.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`;
         el.style.opacity = opacity.toFixed(3);
-        el.style.zIndex = String(10 + Math.round(depth * 100));
+        const zIdx = 10 + Math.round(depth * 100);
+        if (lastZ[i] !== zIdx) {
+          lastZ[i] = zIdx;
+          el.style.zIndex = String(zIdx);
+        }
       }
     };
 
@@ -326,7 +363,7 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     const hasMomentum = () => Math.abs(velYaw) > MIN_VELOCITY || Math.abs(velPitch) > MIN_VELOCITY;
 
     const needsLoop = () =>
-      visible && !pageHidden && !dragging() && (hasMomentum() || resume < 1 || !reducedMotion);
+      visible && !pageHidden && !dragging() && (hasMomentum() || pitch !== 0 || !reducedMotion);
 
     const step = (dt: number, now: number) => {
       if (dragging()) return;
@@ -341,6 +378,12 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
       } else {
         velYaw = 0;
         velPitch = 0;
+      }
+
+      // spring pitch back to the resting tilted-axis pose
+      if (pitch !== 0 && !hasMomentum()) {
+        pitch *= Math.exp(-dt / PITCH_TAU);
+        if (Math.abs(pitch) < 0.0005) pitch = 0;
       }
 
       // ease auto-spin back in after a drag
@@ -373,20 +416,31 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     };
 
     /** Start the loop if it should be running (idempotent). */
+    const paintOnce = () => {
+      if (paintId) return;
+      paintId = requestAnimationFrame((now) => {
+        paintId = 0;
+        if (disposed) return;
+        lastFrame = now;
+        render();
+        // A drag may have been released while this paint was pending; hand off to the loop.
+        if (needsLoop()) kick();
+      });
+    };
+
     const kick = () => {
-      if (disposed || rafId) return;
+      if (disposed) return;
+      if (paintId) {
+        // A pending one-shot must not block the loop; the loop's first frame paints anyway.
+        cancelAnimationFrame(paintId);
+        paintId = 0;
+      }
+      if (rafId) return; // loop already running
       if (needsLoop()) {
         lastFrame = 0;
         rafId = requestAnimationFrame(frame);
       } else if (visible && !pageHidden) {
-        // single paint so the current orientation is on screen
-        rafId = requestAnimationFrame((now) => {
-          rafId = 0;
-          if (!disposed) {
-            lastFrame = now;
-            render();
-          }
-        });
+        paintOnce(); // single paint so the current orientation is on screen
       }
     };
 
@@ -394,6 +448,10 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
       if (rafId) {
         cancelAnimationFrame(rafId);
         rafId = 0;
+      }
+      if (paintId) {
+        cancelAnimationFrame(paintId);
+        paintId = 0;
       }
       lastFrame = 0;
     };
@@ -456,29 +514,37 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
       stop(); // frames are driven by pointermove while dragging
     };
 
-    const endDrag = (e: PointerEvent, withMomentum: boolean) => {
+    const endDrag = (e: PointerEvent | null, withMomentum: boolean) => {
+      const pid = e ? e.pointerId : activePointer;
       try {
-        if (container.hasPointerCapture(e.pointerId)) container.releasePointerCapture(e.pointerId);
+        if (pid !== null && container.hasPointerCapture(pid)) container.releasePointerCapture(pid);
       } catch {
         /* ignore */
       }
       container.style.cursor = 'grab';
       engaged = false;
       activePointer = null;
-      if (!withMomentum || e.timeStamp - lastMoveT > 90) {
+      const stale = e ? e.timeStamp - lastMoveT > 90 : true;
+      if (!withMomentum || stale) {
         velYaw = 0;
         velPitch = 0;
       }
-      releasedAt = e.timeStamp;
+      // RAF timestamps are performance.now()-based; Event.timeStamp is not guaranteed to be.
+      releasedAt = performance.now();
       resume = 0;
       kick();
+    };
+
+    // Focus loss mid-drag (alt-tab, notification) must not leave the sphere stuck in 'grabbing'.
+    const onWindowBlur = () => {
+      if (engaged) endDrag(null, false);
+      else activePointer = null;
     };
 
     const onPointerDown = (e: PointerEvent) => {
       if (activePointer !== null) return; // ignore extra fingers
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       activePointer = e.pointerId;
-      rejected = false;
       engaged = false;
       startX = e.clientX;
       startY = e.clientY;
@@ -490,7 +556,7 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     };
 
     const onPointerMove = (e: PointerEvent) => {
-      if (e.pointerId !== activePointer || rejected) return;
+      if (e.pointerId !== activePointer) return;
       if (!engaged) {
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
@@ -498,9 +564,9 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
         if (Math.abs(dx) > Math.abs(dy) * INTENT_RATIO) {
           beginDrag(e);
         } else {
-          // predominantly vertical: let the page scroll (touch-action: pan-y already allows it)
-          rejected = true;
-          activePointer = null;
+          // Vertical-dominant so far: leave it to the page. If the browser takes the
+          // scroll it fires pointercancel; if it does not, a later horizontal move can
+          // still claim the drag, so keep watching rather than rejecting for good.
           return;
         }
       }
@@ -516,19 +582,12 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
       const dPitch = dy * k;
       yaw += dYaw;
       pitch = clamp(pitch + dPitch, -PITCH_LIMIT, PITCH_LIMIT);
-      // exponential moving average of velocity for momentum
-      velYaw = velYaw * 0.55 + (dYaw / dt) * 0.45;
-      velPitch = velPitch * 0.55 + (dPitch / dt) * 0.45;
+      // time-based low-pass: identical fling from 60 Hz mouse and 120 Hz touch
+      const alpha = 1 - Math.exp(-dt / VEL_TAU);
+      velYaw = clamp(velYaw + (dYaw / dt - velYaw) * alpha, -MAX_VELOCITY, MAX_VELOCITY);
+      velPitch = clamp(velPitch + (dPitch / dt - velPitch) * alpha, -MAX_VELOCITY, MAX_VELOCITY);
 
-      if (!rafId) {
-        rafId = requestAnimationFrame((now) => {
-          rafId = 0;
-          if (!disposed) {
-            lastFrame = now;
-            render();
-          }
-        });
-      }
+      paintOnce();
     };
 
     const onPointerUp = (e: PointerEvent) => {
@@ -575,6 +634,20 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     };
     document.addEventListener('visibilitychange', onVisibility);
 
+    // Re-armed on every change: the query is only true at the *current* DPR.
+    let dprQuery: MediaQueryList | null = null;
+    const onDprChange = () => {
+      resize(container.clientWidth);
+      kick();
+      watchDpr();
+    };
+    const watchDpr = () => {
+      if (dprQuery) dprQuery.removeEventListener('change', onDprChange);
+      dprQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+      dprQuery.addEventListener('change', onDprChange);
+    };
+    watchDpr();
+
     const rmQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     reducedMotion = rmQuery.matches;
     const onReducedMotion = (ev: MediaQueryListEvent) => {
@@ -592,6 +665,7 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
     container.addEventListener('pointerup', onPointerUp);
     container.addEventListener('pointercancel', onPointerCancel);
     container.addEventListener('lostpointercapture', onLostCapture);
+    window.addEventListener('blur', onWindowBlur);
     container.style.cursor = 'grab';
 
     // initial paint (ResizeObserver also fires on observe, but be explicit)
@@ -609,6 +683,8 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
       container.removeEventListener('pointerup', onPointerUp);
       container.removeEventListener('pointercancel', onPointerCancel);
       container.removeEventListener('lostpointercapture', onLostCapture);
+      window.removeEventListener('blur', onWindowBlur);
+      if (dprQuery) dprQuery.removeEventListener('change', onDprChange);
       container.style.cursor = '';
       bodyGradient = null;
     };
@@ -623,15 +699,23 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
       aria-label={ariaLabel}
       className={`relative mx-auto w-full select-none overflow-visible ${className}`}
       style={{
-        maxWidth: MAX_SIZE,
+        // max-width is the caller's to set (Hero passes responsive max-w-*); MAX_SIZE only caps the render.
         aspectRatio: '1 / 1', // reserves the square before first paint
         touchAction: 'pan-y pinch-zoom', // vertical swipes scroll the page; we only claim horizontal drags
+        WebkitTouchCallout: 'none',
         WebkitUserSelect: 'none',
         userSelect: 'none',
         WebkitTapHighlightColor: 'transparent',
         contain: 'layout style',
       }}
     >
+      {/* Lift: a soft shadow disc so the globe floats off the page instead of sitting flat */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-[14%] rounded-full"
+        style={{ boxShadow: variant === 'dark' ? '0 36px 80px -40px rgba(0,0,0,0.7)' : '0 36px 80px -44px rgba(15,23,42,0.35)' }}
+      />
+
       {/* Ambient glow behind the sphere (cheap CSS gradient, no blur filter) */}
       <div
         aria-hidden="true"
@@ -654,12 +738,13 @@ export const SkillSphere: React.FC<SkillSphereProps> = ({ className = '', varian
             ref={(el) => {
               labelRefs.current[i] = el;
             }}
-            className={`absolute left-0 top-0 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 font-mono font-bold leading-none tracking-tight backdrop-blur-[2px] ${palette.pill}`}
+            className={`ss-pill absolute left-0 top-0 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 font-mono font-bold leading-none tracking-tight ${palette.pill}`}
             style={{
+              ['--ss-c' as string]: skill.color,
               fontSize: 'var(--ss-fs, 11px)',
               opacity: 0,
               transform: 'translate3d(-9999px, -9999px, 0)',
-              willChange: 'transform, opacity',
+              willChange: 'transform',
               backfaceVisibility: 'hidden',
             }}
           >

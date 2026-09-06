@@ -740,7 +740,7 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
           {/* Left Column: Call Simulator & Interactive Audio Player */}
           <div className="lg:col-span-7 rounded-2xl bg-white border border-slate-200 p-6 sm:p-7 shadow-sm">
             {/* Call Status Top Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-3">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-xl bg-red-50 border border-red-200 flex items-center justify-center text-red-600 shadow-sm shrink-0">
                   <Mic className="w-5 h-5" />
@@ -809,7 +809,7 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
                   ) : (
                     <>
                       <Play className="w-3.5 h-3.5 fill-white" />
-                      <span>
+                      <span className="whitespace-nowrap">
                         {currentTime > clipStart
                           ? 'Resume call'
                           : `Listen to a live call (${formatTime(clipLength)})`}
@@ -896,8 +896,8 @@ export const VoiceAiStudio: React.FC<VoiceAiStudioProps> = ({ onOpenContact }) =
             >
               <span className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-red-600" />
-                <span>Read Call Transcript</span>
-                <span className="text-[10px] font-normal text-slate-500">
+                <span className="whitespace-nowrap">Read Call Transcript</span>
+                <span className="hidden sm:inline whitespace-nowrap text-[10px] font-normal text-slate-500">
                   ({currentAgent.transcript.length} turns, Hinglish)
                 </span>
               </span>

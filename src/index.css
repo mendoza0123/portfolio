@@ -219,9 +219,13 @@
   animation: ticker-scroll 38s linear infinite;
   will-change: transform;
 }
-.ticker:hover .ticker-track,
 .ticker:focus-within .ticker-track {
   animation-play-state: paused;
+}
+@media (hover: hover) {
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
+  }
 }
 /* Soft edge fade so items appear to slide in from nothing. */
 .ticker {
@@ -229,6 +233,26 @@
           mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
 }
 @media (prefers-reduced-motion: reduce) {
-  .ticker-track { animation: none; }
+  /* Static and fully visible: wrap the single copy, drop the mirrored copy. */
+  .ticker-track {
+    animation: none;
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-right: 0;
+  }
+  .ticker-track > [aria-hidden="true"] { display: none; }
   .ticker { -webkit-mask-image: none; mask-image: none; }
+}
+
+/* Skill Sphere label pills: brand-tinted border, neutral text for contrast.
+   --ss-c is set per pill inline. Falls back to a neutral border where
+   color-mix() is unsupported. */
+.ss-pill {
+  border-color: rgb(226 232 240 / 0.9);
+}
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  .ss-pill {
+    border-color: color-mix(in srgb, var(--ss-c) 38%, transparent);
+  }
 }
